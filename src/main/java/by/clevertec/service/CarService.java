@@ -1,30 +1,40 @@
 package by.clevertec.service;
 
+import by.clevertec.dto.CarDto;
 import by.clevertec.entity.Car;
 import by.clevertec.entity.CarShowroom;
+import by.clevertec.exception.CarNotFoundException;
+import by.clevertec.exception.ShowroomNotFoundException;
+import by.clevertec.mapper.CarMapper;
 import by.clevertec.repository.CarRepository;
+import by.clevertec.repository.CarShowroomRepository;
 
 import java.util.List;
 
 public class CarService {
 
-    private final CarRepository carRepository = new CarRepository();
+    private final CarRepository carRepository ;
+    private final CarShowroomRepository carShowroomRepository;
+    private final CarMapper carMapper;
 
 
-    public Car addCar(Car car) {
-        return carRepository.create(car);
+    public CarDto create(CarDto carDto) {
+        Car car = carRepository.save(carMapper.toCar(carDto));
+        return carMapper.toCarDto(car);
     }
 
-    public void updateCar(Car car) {
-        carRepository.update(car);
+    public void updateCar(Long id,Car car) {
+        carRepository.findById(id)
+                .orElseThrow(()->new CarNotFoundException("Car not found with id : " + id ));
     }
 
-    public void deleteCar(Car car) {
-        carRepository.delete(car.getId());
+    public void deleteById(Long id) {
+        carRepository.deleteById(id);
     }
 
     public Car getCarById(Long id) {
-        return carRepository.findById(id);
+        return carRepository.findById(id)
+                .orElseThrow(()->new CarNotFoundException("Car not found with id : " + id ));
     }
 
     public List<Car> getAllCars() {
@@ -32,8 +42,13 @@ public class CarService {
     }
 
      
-    public void assignCarToShowroom(Car car, CarShowroom carShowroom) {
-        carRepository.assignToShowroom(car, carShowroom);
+    public void assignCarToShowroom(Long carId, Long showroomId) {
+        Car car = carRepository.findById(carId)
+                .orElseThrow(() -> new CarNotFoundException("Car not found with id : " + carId));
+        CarShowroom carShowroom = carShowroomRepository.findById(showroomId)
+                .orElseThrow(() -> new ShowroomNotFoundException("Showroom not found with id : " + showroomId));
+        car.setShowroom(carShowroom);
+        carRepository.save(car);
     }
 
     public List<Car> findCarsByFilters(String brand, String category, Integer year, Double minPrice, Double maxPrice){
