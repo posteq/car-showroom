@@ -1,9 +1,13 @@
 package by.clevertec.mapper;
 
+import by.clevertec.dto.CarDto;
 import by.clevertec.dto.CarShowroomDto;
+import by.clevertec.entity.Car;
 import by.clevertec.entity.CarShowroom;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface CarShowroomMapper {
@@ -13,5 +17,7 @@ public interface CarShowroomMapper {
     CarShowroom toCarShowroom(CarShowroomDto carShowroomDto);
 
     CarShowroomDto toCarShowroomDto(CarShowroom carShowroom);
+
+    List<CarShowroomDto> toCarShowroomDtoList(List<CarShowroom> carShowroom);
 
 }

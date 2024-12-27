@@ -4,11 +4,15 @@ import by.clevertec.entity.Car;
 import by.clevertec.entity.Client;
 import by.clevertec.entity.Review;
 import by.clevertec.repository.ReviewRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
+@AllArgsConstructor
 public class ReviewService {
-    private final ReviewRepository reviewRepository = new ReviewRepository();
+    private final ReviewRepository reviewRepository;
 
     public void updateReview(Review review) {
         reviewRepository.update(review);

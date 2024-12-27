@@ -4,6 +4,7 @@ import by.clevertec.dto.CarDto;
 import by.clevertec.entity.Car;
 import by.clevertec.entity.CarShowroom;
 import by.clevertec.exception.CarNotFoundException;
+import by.clevertec.exception.CategoryNotFoundException;
 import by.clevertec.exception.ShowroomNotFoundException;
 import by.clevertec.mapper.CarMapper;
 import by.clevertec.repository.CarRepository;
@@ -29,18 +30,19 @@ public class CarService {
         return carMapper.toCarDto(car);
     }
 
-    public void updateCar(Long id,Car car) {
+    public void update(Long id,Car car) {
         carRepository.findById(id)
                 .orElseThrow(()->new CarNotFoundException("Car not found with id : " + id ));
     }
 
-    public void deleteById(Long id) {
+    public void delete(Long id) {
         carRepository.deleteById(id);
     }
 
-    public CarDto getCarById(Long id) {
+    public CarDto getById(Long id) {
         return carMapper.toCarDto(carRepository.findById(id)
-                .orElseThrow(()->new CarNotFoundException("Car not found with id : " + id )));
+                .orElseThrow(()->new CategoryNotFoundException("Car not found with id : " + id ))
+        );
     }
 
     public List<CarDto> getAllCars() {
@@ -50,7 +52,7 @@ public class CarService {
      
     public void assignCarToShowroom(Long carId, Long showroomId) {
         Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new CarNotFoundException("Car not found with id : " + carId));
+                .orElseThrow(() -> new CategoryNotFoundException("Car not found with id : " + carId));
         CarShowroom carShowroom = carShowroomRepository.findById(showroomId)
                 .orElseThrow(() -> new ShowroomNotFoundException("Showroom not found with id : " + showroomId));
         car.setShowroom(carShowroom);
