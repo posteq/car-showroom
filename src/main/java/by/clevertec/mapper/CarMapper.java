@@ -5,6 +5,8 @@ import by.clevertec.entity.Car;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface CarMapper {
 
@@ -12,6 +14,7 @@ public interface CarMapper {
 //    @Mapping(target = "review",ignore = true)
     Car toCar(CarDto carDto);
 
-
     CarDto toCarDto(Car car);
+
+    List<CarDto> toCarDtoList(List<Car> cars);
 }

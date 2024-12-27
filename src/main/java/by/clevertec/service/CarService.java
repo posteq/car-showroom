@@ -8,9 +8,15 @@ import by.clevertec.exception.ShowroomNotFoundException;
 import by.clevertec.mapper.CarMapper;
 import by.clevertec.repository.CarRepository;
 import by.clevertec.repository.CarShowroomRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
+@AllArgsConstructor
 public class CarService {
 
     private final CarRepository carRepository ;
@@ -32,13 +38,13 @@ public class CarService {
         carRepository.deleteById(id);
     }
 
-    public Car getCarById(Long id) {
-        return carRepository.findById(id)
-                .orElseThrow(()->new CarNotFoundException("Car not found with id : " + id ));
+    public CarDto getCarById(Long id) {
+        return carMapper.toCarDto(carRepository.findById(id)
+                .orElseThrow(()->new CarNotFoundException("Car not found with id : " + id )));
     }
 
-    public List<Car> getAllCars() {
-        return carRepository.findAll();
+    public List<CarDto> getAllCars() {
+        return carMapper.toCarDtoList(carRepository.findAll());
     }
 
      
@@ -56,11 +62,13 @@ public class CarService {
     }
 
     public List<Car> findCarsSortedByPrice(boolean forwardOrder) {
-        return carRepository.sortByPrice(forwardOrder);
+        Sort orders = forwardOrder ? Sort.by("price").ascending() : Sort.by("price").descending();
+        return carRepository.findAll(orders);
     }
 
     public List<Car> findCarsWithPagination(int pageNumber, int pageSize) {
-        return carRepository.findCarsWithPagination(pageNumber, pageSize);
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        return carRepository.findAll(pageRequest).getContent();
     }
 
 }
