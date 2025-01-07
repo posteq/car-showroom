@@ -1,44 +1,68 @@
 package by.clevertec.service;
 
-import by.clevertec.entity.Car;
-import by.clevertec.entity.Client;
+import by.clevertec.dto.ReviewDto;
 import by.clevertec.entity.Review;
+import by.clevertec.exception.ReviewNotFoundException;
+import by.clevertec.mapper.ReviewMapper;
 import by.clevertec.repository.ReviewRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ReviewService {
     private final ReviewRepository reviewRepository;
+    private final ReviewMapper reviewMapper;
 
-    public void updateReview(Review review) {
-        reviewRepository.update(review);
+    @Transactional
+    public ReviewDto update(Long id,ReviewDto reviewDto) {
+        return reviewMapper.toReviewDto(
+                reviewRepository.findById(id)
+                        .map(review -> {
+                            Review updatedReviewDTO = reviewMapper.toReview(reviewDto);
+                            review.setText(updatedReviewDTO.getText());
+                            review.setRating(updatedReviewDTO.getRating());
+                            review.setCar(updatedReviewDTO.getCar());
+                            review.setClient(updatedReviewDTO.getClient());
+                            return reviewRepository.save(review);
+                        })
+                        .orElseThrow(() -> new ReviewNotFoundException(id))
+        );
     }
 
-    public void deleteReview(Review review) {
-        reviewRepository.delete(review.getId());
+    @Transactional
+    public void delete(Long id) {
+        reviewRepository.deleteById(id);
     }
 
-    public Review getById(Long id) {
-        return reviewRepository.findById(id);
+    @Transactional
+    public ReviewDto findById(Long id) {
+        return reviewMapper.toReviewDto(reviewRepository.findById(id)
+                .orElseThrow(() -> new ReviewNotFoundException(id))
+        );
     }
 
-    public List<Review> getAllReview() {
-        return reviewRepository.findAll();
+    @Transactional
+    public List<ReviewDto> findAll() {
+        return reviewMapper.toReviewDtoList(reviewRepository.findAll());
     }
 
-    public void addReview(Client client, Car car, String text, int rating) {
-        reviewRepository.addReview(client, car, text, rating);
+    @Transactional
+    public ReviewDto create(ReviewDto reviewDto) {
+        Review review = reviewRepository.save(reviewMapper.toReview(reviewDto));
+        return reviewMapper.toReviewDto(review);
     }
 
-    public List<Review> searchReviews(String keyword) {
-        return reviewRepository.searchByKeyword(keyword);
+    @Transactional
+    public List<ReviewDto> searchReviews(String keyword) {
+        return reviewMapper.toReviewDtoList(reviewRepository.findReviewsByKeyword(keyword));
     }
 
-    public List<Review> searchReviewsByRating(int rating) {
-        return reviewRepository.searchByRating(rating);
+    @Transactional(readOnly = true)
+    public List<ReviewDto> findReviewsByRating(int rating) {
+        return reviewMapper.toReviewDtoList(reviewRepository.findByRating(rating));
     }
 }

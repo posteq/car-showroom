@@ -3,7 +3,6 @@ package by.clevertec.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -52,6 +51,6 @@ public class CarShowroom {
     private String address;
 
     @Builder.Default
-    @OneToMany(mappedBy = "showroom", cascade = CascadeType.ALL, orphanRemoval = true ,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "showroom", cascade = CascadeType.ALL, orphanRemoval = true )
     private List<Car> cars = new ArrayList<>();
 }

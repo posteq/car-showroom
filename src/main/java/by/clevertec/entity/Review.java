@@ -45,11 +45,11 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "content", nullable = false, length = 300)
-    private String content;
+    @Column(name = "text", nullable = false, length = 300)
+    private String text;
 
     @Column(name = "rating", nullable = false)
-    private Integer rating;
+    private int rating;
 
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)

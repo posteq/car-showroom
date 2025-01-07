@@ -2,25 +2,29 @@ package by.clevertec.service;
 
 import by.clevertec.dto.CarShowroomDto;
 import by.clevertec.entity.CarShowroom;
-import by.clevertec.exception.CategoryNotFoundException;
+import by.clevertec.exception.ShowroomNotFoundException;
 import by.clevertec.mapper.CarShowroomMapper;
 import by.clevertec.repository.CarShowroomRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CarShowroomService {
+
     private final CarShowroomRepository carShowroomRepository;
     private final CarShowroomMapper carShowroomMapper;
 
-    public CarShowroomDto addShowroom(CarShowroomDto carShowroomDto) {
+    @Transactional
+    public CarShowroomDto create(CarShowroomDto carShowroomDto) {
         CarShowroom carShowroom = carShowroomRepository.save(carShowroomMapper.toCarShowroom(carShowroomDto));
         return carShowroomMapper.toCarShowroomDto(carShowroom);
     }
 
+    @Transactional
     public CarShowroomDto update(Long id,CarShowroomDto showroomDto) {
         return carShowroomMapper.toCarShowroomDto(
                 carShowroomRepository.findById(id)
@@ -30,25 +34,25 @@ public class CarShowroomService {
                         showroom.setAddress(updatedShowroomDTO.getAddress());
                         return carShowroomRepository.save(showroom);
                     })
-                .orElseThrow(() -> new CategoryNotFoundException("Showroom not found with id : " + id))
+                .orElseThrow(() -> new ShowroomNotFoundException(id))
         );
     }
 
+    @Transactional
     public void delete(Long id) {
         carShowroomRepository.deleteById(id);
     }
 
-    public CarShowroomDto getById(Long id) {
+    @Transactional
+    public CarShowroomDto findById(Long id) {
         return carShowroomMapper.toCarShowroomDto(carShowroomRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Showroom not found with id : " + id))
+                .orElseThrow(() -> new ShowroomNotFoundException(id))
         );
     }
 
-    public List<CarShowroomDto> getAll() {
+    @Transactional
+    public List<CarShowroomDto> findAll() {
         return carShowroomMapper.toCarShowroomDtoList(carShowroomRepository.findAll());
     }
 
-    public List<CarShowroomDto> getShowroomWithCars() {
-        return carShowroomRepository.findAllShowroomWithCars();
-    }
 }

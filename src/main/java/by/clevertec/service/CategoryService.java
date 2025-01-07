@@ -5,23 +5,26 @@ import by.clevertec.entity.Category;
 import by.clevertec.exception.CategoryNotFoundException;
 import by.clevertec.mapper.CategoryMapper;
 import by.clevertec.repository.CategoryRepository;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
 
-    public CategoryDto addCategory(CategoryDto categoryDto) {
+    @Transactional
+    public CategoryDto create(CategoryDto categoryDto) {
         Category category = categoryRepository.save(categoryMapper.toCategory(categoryDto));
         return categoryMapper.toCategoryDto(category);
     }
 
+    @Transactional
     public CategoryDto update(Long id,CategoryDto categoryDto) {
         return categoryMapper.toCategoryDto(
                 categoryRepository.findById(id)
@@ -30,21 +33,24 @@ public class CategoryService {
                             category.setName(updatedCategoryDTO.getName());
                             return categoryRepository.save(category);
                         })
-                        .orElseThrow(() -> new CategoryNotFoundException("Category not found with id : " + id))
+                        .orElseThrow(() -> new CategoryNotFoundException(id))
         );
     }
 
+    @Transactional
     public void delete(Long id) {
         categoryRepository.deleteById(id);
     }
 
-    public CategoryDto getById(Long id) {
+    @Transactional
+    public CategoryDto findById(Long id) {
         return categoryMapper.toCategoryDto(categoryRepository.findById(id)
-                .orElseThrow(() -> new CategoryNotFoundException("Category not found with id : " + id))
+                .orElseThrow(() -> new CategoryNotFoundException(id))
         );
     }
 
-    public List<CategoryDto> getAll() {
+    @Transactional
+    public List<CategoryDto> findAll() {
         return categoryMapper.toCategoryDtoList(categoryRepository.findAll());
     }
 

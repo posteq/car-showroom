@@ -1,7 +1,7 @@
 package by.clevertec.exception;
 
-public class ClientNotFoundException extends IllegalArgumentException {
-    public ClientNotFoundException(String message) {
-        super(message);
+public class ClientNotFoundException extends RuntimeException {
+    public ClientNotFoundException(Long id) {
+        super("Client not found with id : " + id);
     }
 }

@@ -3,6 +3,7 @@ package by.clevertec.entity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,15 +13,12 @@ import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.FetchType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +38,6 @@ import java.util.List;
                 @NamedAttributeNode("showroom"),
         }
 )
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Car {
 
     @Id
@@ -54,21 +51,20 @@ public class Car {
     private String brand;
 
     @Column(name = "price", nullable = false)
-    private Double price;
+    private double price;
 
-    @Column(name = "years_of_release", nullable = false)
-    private Integer yearsOfRelease;
+    @Column(name = "year", nullable = false)
+    private int year;
 
     @ManyToOne()
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @ManyToOne()
-    @JoinColumn(name ="car_showroom_id" )
+    @JoinColumn(name ="showroom_id" )
     private CarShowroom showroom;
 
     @OneToMany(mappedBy = "car",cascade = CascadeType.ALL,orphanRemoval=true,fetch = FetchType.LAZY)
-    @Column(name = "review")
     @Builder.Default
     private List<Review> review = new ArrayList<>();
 }

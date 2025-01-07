@@ -1,9 +1,7 @@
 package by.clevertec.exception;
 
-import java.security.InvalidParameterException;
-
-public class CategoryNotFoundException extends InvalidParameterException {
-    public CategoryNotFoundException(String message) {
-        super(message);
+public class CategoryNotFoundException extends RuntimeException {
+    public CategoryNotFoundException(Long id) {
+        super("Category not found with id : " + id);
     }
 }

@@ -1,7 +1,7 @@
 package by.clevertec.exception;
 
-public class CarNotFoundException extends IllegalArgumentException {
+public class CarNotFoundException extends RuntimeException {
     public CarNotFoundException(Long id) {
-        super("");
+        super("Car not found with id : " + id);
     }
 }

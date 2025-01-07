@@ -46,11 +46,11 @@ public class Client {
     @CollectionTable(
             name = "client_contacts",
             joinColumns = @JoinColumn(name = "client_id"))
-    @Column(name = "contacts",nullable = false)
+    @Column(name = "contact",nullable=false)
     private List<String> contacts = new ArrayList<>();
 
-    @Column(name = "date",nullable=false)
-    private LocalDate dataOfRegistration;
+    @Column(name = "data_registration",nullable=false)
+    private LocalDate dataRegistration;
 
     @Builder.Default
     @ManyToMany()
